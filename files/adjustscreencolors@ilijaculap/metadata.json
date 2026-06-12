@@ -1,7 +1,7 @@
 {
     "website": "https://github.com/ilijaculap/adjustscreencolors-cinnamon",
     "url": "https://github.com/ilijaculap/adjustscreencolors-cinnamon",
-    "description": "This simple Cinnamon extension lets you adjust either the entire screen or only the active window’s colors, with configurable keyboard shortcuts.",
+    "description": "This simple Cinnamon extension lets you adjust either the entire screen or only the active windows colors, with configurable keyboard shortcuts.",
     "version": "0.1",
     "cinnamon-version": [
         "6.4",
@@ -9,6 +9,5 @@
     ],
     "name": "Adjust screen colors",
     "uuid": "adjustscreencolors@ilijaculap",
-    "author": "ilijaculap",
-    "last-edited": 1779297977
+    "author": "ilijaculap"
 }

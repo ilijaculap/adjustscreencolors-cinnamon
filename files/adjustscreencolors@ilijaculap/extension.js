@@ -111,12 +111,24 @@ function correctionShader() {
         `;
 }
 
-function _applySettings() {
+function _onModeChange() {
+	_removeFilter();
+	_applySettings();
+}
 
-	// Remove all filters
-	if(AREA != SETTINGS.getValue("mode")) {
-		_removeFilter();
-	}
+function _onKBChange() {
+
+	// Remove keybindings
+	Main.keybindingManager.removeHotKey("correct-colors-kb");
+
+	// Get new hotkey
+	HOTKEY = SETTINGS.getValue("kb-shortcut");
+
+	// Add hotkey
+	_bindKeys();
+}
+
+function _applySettings() {
 
 	// Assign values from settings
     PROPERTIES[0] = SETTINGS.getValue("hue-shift") / 100;
@@ -129,6 +141,7 @@ function _applySettings() {
 	AREA = SETTINGS.getValue("mode");
 
 }
+
 
 function _bindKeys() {
 	// Invert colors on whole screen
@@ -182,9 +195,40 @@ function _applyFilter() {
 	}
 }
 
+function _reapplyFilter() {
+
+	// Reapply settings
+	_applySettings();
+	
+	// Full screen mode
+	if(AREA === "fullscreen") {
+		if(Main.uiGroup.get_effect('correct-screen-colors')) {
+			Main.uiGroup.remove_effect_by_name('correct-screen-colors');
+			let effect_fs = new CorrectColors();
+			Main.uiGroup.add_effect_with_name('correct-screen-colors', effect_fs);
+		}
+	}
+	else if(AREA === "windowonly") {
+		global.get_window_actors().forEach(function(actor) {
+			let meta_window = actor.get_meta_window();
+			if(meta_window.has_focus()) {
+				if(actor.get_effect('correct-window-colors')) {
+					actor.remove_effect_by_name('correct-window-colors');
+					let effect_wd = new CorrectColors();
+					actor.add_effect_with_name('correct-window-colors', effect_wd);
+				}
+			}
+		})
+	}
+}
+
 function init() { }
 
 function disable() {
+
+	// Remove all filters
+	_removeFilter();
+
 	// Remove keybindings on disable
 	Main.keybindingManager.removeHotKey("correct-colors-kb");
 }
@@ -195,17 +239,18 @@ function enable() {
     SETTINGS = new Settings.ExtensionSettings(this, UUID);
 
 	// Bind settings buttons
-	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'kb-shortcut', 'kb-shortcut', _applySettings, null);
-	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'mode', 'mode', _applySettings, null);
-    SETTINGS.bindProperty(Settings.BindingDirection.IN, 'hue-shift', 'hue-shift', _applySettings, null);
-	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'saturation', 'saturation', _applySettings, null);
-	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'value', 'value', _applySettings, null);
-	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'brightness', 'brightness', _applySettings, null);
-	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'contrast', 'contrast', _applySettings, null);
-	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'gamma', 'gamma', _applySettings, null);
+	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'kb-shortcut', 'kb-shortcut', _onKBChange, null);
+	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'mode', 'mode', _onModeChange, null);
+    SETTINGS.bindProperty(Settings.BindingDirection.IN, 'hue-shift', 'hue-shift', _reapplyFilter, null);
+	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'saturation', 'saturation', _reapplyFilter, null);
+	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'value', 'value', _reapplyFilter, null);
+	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'brightness', 'brightness', _reapplyFilter, null);
+	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'contrast', 'contrast', _reapplyFilter, null);
+	SETTINGS.bindProperty(Settings.BindingDirection.IN, 'gamma', 'gamma', _reapplyFilter, null);
 
 	// Apply settings and bind keyboard keys
 	_applySettings();
 	_bindKeys();
 
 }
+h

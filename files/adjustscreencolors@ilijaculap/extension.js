@@ -112,8 +112,12 @@ function correctionShader() {
 }
 
 function _onModeChange() {
+
+	// Remove all filters
 	_removeFilter();
-	_applySettings();
+
+	// Get new settings for AREA
+	AREA = SETTINGS.getValue("mode");
 }
 
 function _onKBChange() {
@@ -141,7 +145,6 @@ function _applySettings() {
 	AREA = SETTINGS.getValue("mode");
 
 }
-
 
 function _bindKeys() {
 	// Invert colors on whole screen
@@ -253,4 +256,3 @@ function enable() {
 	_bindKeys();
 
 }
-h

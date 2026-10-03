@@ -135,13 +135,34 @@ function _onKBChange() {
 function _applySettings() {
 
 	// Assign values from settings
-    PROPERTIES[0] = SETTINGS.getValue("hue-shift") / 100;
+
+	// Hue
+	if (SETTINGS.getValue("hue-shift") === 0) {
+		PROPERTIES[0] = 0.01;
+	}
+	else {
+		PROPERTIES[0] = SETTINGS.getValue("hue-shift") / 100;
+	}
+
+	// Saturation
 	PROPERTIES[1] = SETTINGS.getValue("saturation") / 100;
+	
+	// Value
 	PROPERTIES[2] = SETTINGS.getValue("value") / 100;
+
+	// Brightness
 	PROPERTIES[3] = (SETTINGS.getValue("brightness") - 100) / 100;
+
+	// Contrast
 	PROPERTIES[4] = SETTINGS.getValue("contrast") / 100;
+
+	// Gamma
 	PROPERTIES[5] = SETTINGS.getValue("gamma") / 100;
+
+	// Hotkey
 	HOTKEY = SETTINGS.getValue("kb-shortcut");
+
+	// Area
 	AREA = SETTINGS.getValue("mode");
 
 }
